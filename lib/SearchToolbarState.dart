@@ -9,7 +9,7 @@ class SearchToolbarState extends State<SearchToolbar> {
   int _textLength = 0;
 
   /// Define the focus node. To manage the life cycle, create the FocusNode in the initState method, and clean it up in the dispose method.
-   FocusNode ? _focusNode;
+  FocusNode? _focusNode;
 
   /// An object that is used to control the Text Form Field.
   final TextEditingController _editingController = TextEditingController();
@@ -80,7 +80,7 @@ class SearchToolbarState extends State<SearchToolbar> {
           child: IconButton(
             icon: Icon(
               Icons.arrow_back,
-              color: Color(0x000000).withOpacity(0.54),
+              color: Colors.white,
               size: 24,
             ),
             onPressed: () {
@@ -92,8 +92,8 @@ class SearchToolbarState extends State<SearchToolbar> {
         ),
         Flexible(
           child: TextFormField(
-            style: TextStyle(
-                color: Color(0x000000).withOpacity(0.87), fontSize: 16),
+            style:
+                TextStyle(color: Colors.white.withOpacity(0.87), fontSize: 16),
             enableInteractiveSelection: false,
             focusNode: _focusNode,
             keyboardType: TextInputType.text,
@@ -102,7 +102,7 @@ class SearchToolbarState extends State<SearchToolbar> {
             decoration: InputDecoration(
               border: InputBorder.none,
               hintText: 'Find...',
-              hintStyle: TextStyle(color: Color(0x000000).withOpacity(0.34)),
+              hintStyle: TextStyle(color: Colors.white.withOpacity(0.34)),
             ),
             onChanged: (text) {
               if (_textLength < _editingController.value.text.length) {
@@ -134,7 +134,7 @@ class SearchToolbarState extends State<SearchToolbar> {
             child: IconButton(
               icon: Icon(
                 Icons.clear,
-                color: Color.fromRGBO(0, 0, 0, 0.54),
+                color: Colors.white,
                 size: 24,
               ),
               onPressed: () {

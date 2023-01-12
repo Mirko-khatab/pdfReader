@@ -17,6 +17,8 @@ class CustomSearchPdfViewer extends StatefulWidget {
   CustomSearchPdfViewerState createState() => CustomSearchPdfViewerState();
 }
 
+Key? PageStorageKey;
+
 class CustomSearchPdfViewerState extends State<CustomSearchPdfViewer> {
   final PdfViewerController _pdfViewerController = PdfViewerController();
   final GlobalKey<SearchToolbarState> _textSearchKey = GlobalKey();
@@ -24,15 +26,22 @@ class CustomSearchPdfViewerState extends State<CustomSearchPdfViewer> {
   bool? _showToast;
   bool? _showScrollHead;
   bool? _showSearchToolbar;
+  bool? showAppBar;
+
+  int? pageNum;
 
   // Ensure the entry history of text search.
   LocalHistoryEntry? _localHistoryEntry;
+
+  var boolTrue;
 
   @override
   void initState() {
     _showToast = false;
     _showScrollHead = true;
     _showSearchToolbar = false;
+    showAppBar = false;
+
     super.initState();
   }
 
@@ -58,67 +67,85 @@ class CustomSearchPdfViewerState extends State<CustomSearchPdfViewer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _showSearchToolbar!
-          ? AppBar(
-              flexibleSpace: SafeArea(
-                child: SearchToolbar(
-                  key: _textSearchKey,
-                  showTooltip: true,
-                  controller: _pdfViewerController,
-                  onTap: (Object toolbarItem) async {
-                    if (toolbarItem.toString() == 'Cancel Search') {
-                      setState(() {
-                        _showSearchToolbar = false;
-                        _showScrollHead = true;
-                        if (Navigator.canPop(context)) {
-                          Navigator.maybePop(context);
+      appBar: showAppBar!
+          ? (_showSearchToolbar!
+              ? AppBar(
+                  flexibleSpace: SafeArea(
+                    child: SearchToolbar(
+                      key: _textSearchKey,
+                      showTooltip: true,
+                      controller: _pdfViewerController,
+                      onTap: (Object toolbarItem) async {
+                        if (toolbarItem.toString() == 'Cancel Search') {
+                          setState(() {
+                            _showSearchToolbar = false;
+                            _showScrollHead = true;
+                            if (Navigator.canPop(context)) {
+                              Navigator.maybePop(context);
+                            }
+                          });
                         }
-                      });
-                    }
-                    if (toolbarItem.toString() == 'onSubmit') {
-                      setState(() {
-                        _showToast = true;
-                      });
-                      await Future.delayed(Duration(seconds: 2));
-                      setState(() {
-                        _showToast = false;
-                      });
-                    }
-                  },
-                ),
-              ),
-              automaticallyImplyLeading: false,
-              backgroundColor: Color(0xFFFAFAFA),
-            )
-          : AppBar(
-              title: Text(
-                'Syncfusion Flutter PDF Viewer',
-                style: TextStyle(color: Colors.black87),
-              ),
-              actions: [
-                IconButton(
-                  icon: Icon(
-                    Icons.search,
-                    color: Colors.black87,
+                        if (toolbarItem.toString() == 'onSubmit') {
+                          setState(() {
+                            _showToast = true;
+                          });
+                          await Future.delayed(Duration(seconds: 2));
+                          setState(() {
+                            _showToast = false;
+                          });
+                        }
+                      },
+                    ),
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _showScrollHead = false;
-                      _showSearchToolbar = true;
-                      _ensureHistoryEntry();
-                    });
-                  },
-                ),
-              ],
-              automaticallyImplyLeading: false,
-              backgroundColor: Color(0xFFFAFAFA),
-            ),
+                  automaticallyImplyLeading: false,
+                  backgroundColor: Color.fromARGB(255, 68, 54, 227),
+                )
+              : AppBar(
+                  backgroundColor: Color.fromARGB(255, 68, 54, 227),
+                  actions: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.search,
+                        color: Colors.white,
+                        size: MediaQuery.of(context).size.width * 0.07,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _showScrollHead = false;
+                          _showSearchToolbar = true;
+                          _ensureHistoryEntry();
+                        });
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.grid_3x3_sharp,
+                        color: Colors.white,
+                        size: MediaQuery.of(context).size.width * 0.07,
+                      ),
+                      onPressed: () {},
+                    ),
+                  ],
+                  automaticallyImplyLeading: false,
+                ))
+          : null,
       body: Stack(
         children: [
-          SfPdfViewer.network(
-            'https://cdn.syncfusion.com/content/PDFViewer/flutter-succinctly.pdf',
+          SfPdfViewer.asset(
+            'assets/leson.pdf',
             controller: _pdfViewerController,
             canShowScrollHead: _showScrollHead!,
+            canShowPaginationDialog: true,
+            key: PageStorageKey,
+            // key: pageNum,
+          ),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                showAppBar = !showAppBar!;
+                print('its workoing');
+              });
+            },
           ),
           Visibility(
             visible: _showToast!,
